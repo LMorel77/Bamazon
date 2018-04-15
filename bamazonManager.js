@@ -39,7 +39,7 @@ function startMenu() {
 
             if (answers.start === '\t1) View Products for Sale') viewProducts(products);
             else if (answers.start === '\t2) View Low Inventory') viewLowInventory(products);
-            else if (answers.start === '\t3) Update Inventory') updateInventory();
+            else if (answers.start === '\t3) Update Inventory') updateInventory(products);
             else if (answers.start === '\t4) Add New Product') addProduct();
             else { console.log('\nGood-bye!'); sqlCxn.end(); };
 
@@ -78,11 +78,118 @@ function viewLowInventory(products) {
 
 }
 
-function updateInventory() {
-    console.log('\nUpdate Inventory Selected\n');
-    startMenu();
-}
+function updateInventory(products) {
+
+    console.log('');
+    inquirer.prompt([
+        {
+            name: 'id',
+            type: 'list',
+            message: "Which product would you like to update?.",
+            choices: function () {
+                var item_id_list = [];
+                for (let i = 0; i < products.length; i++) {
+                    item_id_list.push(products[i].item_id);
+                };
+                return item_id_list;
+            }
+        },
+        {
+            name: 'qty',
+            type: 'input',
+            message: "Enter new inventory number:",
+            validate: function (input) {
+                if (!isNaN(input)) return true;
+                return false;
+            }
+        }
+    ]).then(function (answers) {
+
+        var item;
+        for (let i = 0; i < products.length; i++) {
+            if (products[i].item_id === answers.id) item = products[i];
+        }
+
+        var newInventory = parseInt(item.stock_quantity) + parseInt(answers.qty);
+        sqlCxn.query("UPDATE products SET ? WHERE ?",
+            [
+                { stock_quantity: newInventory },
+                { item_id: answers.id }
+            ],
+            function (error) {
+
+                if (error) throw error;
+                console.log("\nInventory updated successfully!\n");
+                startMenu();
+
+            });
+
+    });
+
+};
+
 function addProduct() {
-    console.log('\nAdd Product Selected\n');
-    startMenu();
+
+    var department_list = [];
+    sqlCxn.query("SELECT DISTINCT department_name FROM products", function (error, departments) {
+        if (error) throw error;
+        for (let i = 0; i < departments.length; i++) {
+            department_list.push(departments[i].department_name);
+        }
+    });
+
+    console.log('');
+    inquirer.prompt([
+        {
+            name: 'id',
+            type: 'input',
+            message: 'Enter the item ID:'
+        },
+        {
+            name: 'name',
+            type: 'input',
+            message: 'Enter the product name:'
+        },
+        {
+            name: 'dept',
+            type: 'list',
+            message: 'Select the department:',
+            choices: department_list
+        },
+        {
+            name: 'price',
+            type: 'input',
+            message: 'Enter the price:',
+            validate: function (input) {
+                if (!isNaN(input)) return true;
+                return false;
+            }
+        },
+        {
+            name: 'qty',
+            type: 'input',
+            message: 'Enter the inventory amount:',
+            validate: function (input) {
+                if (!isNaN(input)) return true;
+                return false;
+            }
+        }
+    ]).then(function (answers) {
+
+        sqlCxn.query("INSERT INTO products SET ?",
+            {
+                item_id: answers.id,
+                product_name: answers.name,
+                department_name: answers.dept,
+                price: answers.price,
+                stock_quantity: answers.qty
+            },
+        function (error) {
+            if (error) throw error;
+            console.log("\nProduct added successfully!\n");
+            startMenu();
+        });
+
+    });
+
 }
