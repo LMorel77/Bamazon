@@ -21,7 +21,7 @@ sqlCxn.connect(function (error) {
 
 function startMenu() {
 
-    sqlCxn.query("SELECT * FROM products", function (error, data) {
+    sqlCxn.query("SELECT * FROM products", function (error, products) {
 
         if (error) throw error;
         inquirer.prompt([
@@ -33,8 +33,8 @@ function startMenu() {
             }
         ]).then(function (answers) {
 
-            if (answers.prompt === '\t1) Display Products') displayProducts(data);
-            else if (answers.prompt === '\t2) Place an Order') placeOrder(data);
+            if (answers.prompt === '\t1) Display Products') displayProducts(products);
+            else if (answers.prompt === '\t2) Place an Order') placeOrder(products);
             else { console.log('Good-bye!'); sqlCxn.end(); };
 
         });
@@ -43,18 +43,18 @@ function startMenu() {
 
 };
 
-function displayProducts(data) {
+function displayProducts(products) {
 
     console.log("\nItem ID     Price\tDescription\n");
-    for (let i = 0; i < data.length; i++) {
-        console.log(data[i].item_id + "  $ " + (data[i].price).toFixed(2) + "\t" + data[i].product_name);
+    for (let i = 0; i < products.length; i++) {
+        console.log(products[i].item_id + "  $ " + (products[i].price).toFixed(2) + "\t" + products[i].product_name);
     };
     console.log('');
     startMenu();
 
 };
 
-function placeOrder(data) {
+function placeOrder(products) {
 
     inquirer.prompt([
         {
@@ -63,8 +63,8 @@ function placeOrder(data) {
             message: "Please select an item ID.",
             choices: function () {
                 var item_id_list = [];
-                for (let i = 0; i < data.length; i++) {
-                    item_id_list.push(data[i].item_id);
+                for (let i = 0; i < products.length; i++) {
+                    item_id_list.push(products[i].item_id);
                 };
                 return item_id_list;
             }
@@ -83,8 +83,8 @@ function placeOrder(data) {
     ]).then(function (answers) {
 
         var item;
-        for (let i = 0; i < data.length; i++) {
-            if (data[i].item_id === answers.id) item = data[i];
+        for (let i = 0; i < products.length; i++) {
+            if (products[i].item_id === answers.id) item = products[i];
         }
         if (answers.qty > item.stock_quantity) {
             console.log("\nWe're sorry, requested quantity unavailable. In stock: " + item.stock_quantity + "\n");
@@ -156,7 +156,7 @@ function updateProduct(item, qty) {
 
             if (error) throw error;
             totalCost = item.price * qty;
-            console.log("\nOrder placed successfully! Total cost: $" + totalCost.toFixed(2) + "\n");
+            console.log("\nOrder placed successfully! Order total: $" + totalCost.toFixed(2) + "\n");
             startMenu();
 
         });
