@@ -2,17 +2,21 @@ var inquirer = require('inquirer');
 var mysql = require('mysql');
 
 var sqlCxn = mysql.createConnection({
+
     host: 'localhost',
     port: 3306,
     user: 'root',
     password: 'root',
     database: 'bamazon'
+
 });
 
 sqlCxn.connect(function (error) {
+
     if (error) throw error;
     console.log("\nBAMAZON Online Super Store\n");
     startMenu();
+
 });
 
 function startMenu() {
@@ -20,7 +24,6 @@ function startMenu() {
     sqlCxn.query("SELECT * FROM products", function (error, data) {
 
         if (error) throw error;
-
         inquirer.prompt([
             {
                 name: 'prompt',
@@ -32,7 +35,7 @@ function startMenu() {
 
             if (answers.prompt === '\t1) Display Products') displayProducts(data);
             else if (answers.prompt === '\t2) Place an Order') placeOrder(data);
-            else { console.log('Good-bye!'); sqlCxn.end(); }
+            else { console.log('Good-bye!'); sqlCxn.end(); };
 
         });
 
@@ -85,19 +88,17 @@ function placeOrder(data) {
         }
         if (answers.qty > item.stock_quantity) {
             console.log("\nWe're sorry, requested quantity unavailable. In stock: " + item.stock_quantity + "\n");
-            quantityUpdate(item);
+            updateQuantity(item);
         }
         else {
-            console.log("\nOrder placed successfully!\n");
-            // updateProduct(item, answers.qty);
-            startMenu();
+            updateProduct(item, answers.qty);
         }
 
     });
 
 };
 
-function quantityUpdate(item) {
+function updateQuantity(item) {
 
     inquirer.prompt([
         {
@@ -108,8 +109,8 @@ function quantityUpdate(item) {
         }
     ]).then(function (answers) {
 
+        console.log('');
         if (answers.input === '\t1) Yes') {
-
             inquirer.prompt([
                 {
                     name: 'qty',
@@ -126,18 +127,17 @@ function quantityUpdate(item) {
 
                 if (answers.qty > item.stock_quantity) {
                     console.log("\nWe're sorry, requested quantity unavailable. In stock: " + item.stock_quantity + "\n");
-                    quantityUpdate(item);
+                    updateQuantity(item);
                 }
                 else {
-                    console.log("\nOrder placed successfully!\n");
-                    // updateProduct(item, answers.qty);
-                    startMenu();
+                    updateProduct(item, answers.qty);
                 }
 
             });
 
         }
         else {
+            console.log('');
             startMenu();
         }
 
@@ -147,4 +147,18 @@ function quantityUpdate(item) {
 
 function updateProduct(item, qty) {
 
-}
+    sqlCxn.query("UPDATE products SET ? WHERE ?",
+        [
+            { stock_quantity: item.stock_quantity - qty },
+            { item_id: item.item_id }
+        ],
+    function (error) {
+
+            if (error) throw error;
+            totalCost = item.price * qty;
+            console.log("\nOrder placed successfully! Total cost: $" + totalCost.toFixed(2) + "\n");
+            startMenu();
+
+        });
+
+};
