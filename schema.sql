@@ -10,7 +10,20 @@ CREATE TABLE products (
     PRIMARY KEY (item_id)
 );
 
--- Mock Data --
+-- Adding 'product_sales' column/field to existing table 'products':
+ALTER TABLE products
+ADD COLUMN product_sales DECIMAL(10,2) DEFAULT 0.00
+AFTER stock_quantity;
+
+-- Creating table 'departments'
+CREATE TABLE departments (
+    department_id INT NOT NULL AUTO_INCREMENT,
+    department_name VARCHAR(128),
+    over_head_costs DECIMAL(10,2),
+    PRIMARY KEY (department_id)
+);
+
+-- Mock Data for 'products' table
 INSERT INTO products (item_id, product_name, department_name, price, stock_quantity)
 VALUES
     ("B004AHDV5A",
@@ -73,3 +86,13 @@ VALUES
     "Pet Supplies",
     62.40,
     69);
+
+-- Mock data for 'departments' table
+INSERT INTO departments (department_name, over_head_costs)
+VALUES ('Food', 250000),
+    ('Pet Supplies', 121500),
+    ('Home Improvement', 212700),
+    ('Electronics', 97676),
+    ('Automotive', 81650),
+    ('Apparel', 149696),
+    ('Health', 77126);

@@ -131,7 +131,7 @@ function updateInventory(products) {
 function addProduct() {
 
     var department_list = [];
-    sqlCxn.query("SELECT DISTINCT department_name FROM products", function (error, departments) {
+    sqlCxn.query("SELECT department_name FROM departments GROUP BY department_name", function (error, departments) {
         if (error) throw error;
         for (let i = 0; i < departments.length; i++) {
             department_list.push(departments[i].department_name);

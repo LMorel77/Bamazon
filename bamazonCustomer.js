@@ -1,5 +1,6 @@
 var inquirer = require('inquirer');
 var mysql = require('mysql');
+var table = require('easy-table');
 
 var sqlCxn = mysql.createConnection({
 
@@ -45,11 +46,16 @@ function startMenu() {
 
 function displayProducts(products) {
 
-    console.log("\nItem ID     Price\tDescription\n");
-    for (let i = 0; i < products.length; i++) {
-        console.log(products[i].item_id + "  $ " + (products[i].price).toFixed(2) + "\t" + products[i].product_name);
-    };
-    console.log('');
+
+    console.log("\nProducts\n");
+    var tbl = new table;
+    products.forEach(function(products) {
+        tbl.cell('Item ID', products.item_id);
+        tbl.cell('Description', products.product_name);
+        tbl.cell('Price (US$)', products.price, table.number(2));
+        tbl.newRow();
+    });
+    console.log(tbl.toString(), "\n");
     startMenu();
 
 };
@@ -147,15 +153,20 @@ function updateQuantity(item) {
 
 function updateProduct(item, qty) {
 
+    var totalCost = item.price * qty;
     sqlCxn.query("UPDATE products SET ? WHERE ?",
         [
-            { stock_quantity: item.stock_quantity - qty },
-            { item_id: item.item_id }
+            {
+                stock_quantity: item.stock_quantity - qty,
+                product_sales: item.product_sales + totalCost
+            },
+            { 
+                item_id: item.item_id
+            }
         ],
-    function (error) {
+        function (error) {
 
             if (error) throw error;
-            totalCost = item.price * qty;
             console.log("\nOrder placed successfully! Order total: $" + totalCost.toFixed(2) + "\n");
             startMenu();
 
