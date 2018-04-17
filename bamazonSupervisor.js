@@ -46,7 +46,7 @@ function startMenu() {
 function viewSalesByDept() {
 
     var sqlQueryStmt = "SELECT tbl1.department_id, tbl1.department_name, tbl1.over_head_costs, " +
-        "SUM(tbl2.product_sales) AS product_sales, (tbl2.product_sales - tbl1.over_head_costs) " +
+        "SUM(tbl2.product_sales) AS product_sales, (SUM(tbl2.product_sales) - tbl1.over_head_costs) " +
         "AS total_profit FROM departments tbl1 INNER JOIN products tbl2 ON tbl1.department_name " +
         "= tbl2.department_name GROUP BY department_name";
 
