@@ -15,6 +15,7 @@ var sqlCxn = mysql.createConnection({
 sqlCxn.connect(function (error) {
 
     if (error) throw error;
+    console.clear();
     console.log("\nBAMAZON Online Super Store\n");
     startMenu();
 
@@ -37,7 +38,7 @@ function startMenu() {
         if (answers.start === '\t1) View Product Sales by Department') viewSalesByDept();
         else if (answers.start === '\t2) View Department List') viewDepartments();
         else if (answers.start === '\t3) Create New Department') addDepartment();
-        else { console.log('\nGood-bye!'); sqlCxn.end(); };
+        else { console.clear(); console.log('\nGood-bye!'); sqlCxn.end(); };
 
     });
 
@@ -45,6 +46,7 @@ function startMenu() {
 
 function viewSalesByDept() {
 
+    console.clear();
     var sqlQueryStmt = "SELECT tbl1.department_id, tbl1.department_name, tbl1.over_head_costs, " +
         "SUM(tbl2.product_sales) AS product_sales, (SUM(tbl2.product_sales) - tbl1.over_head_costs) " +
         "AS total_profit FROM departments tbl1 INNER JOIN products tbl2 ON tbl1.department_name " +
@@ -53,7 +55,7 @@ function viewSalesByDept() {
     sqlCxn.query(sqlQueryStmt, function (error, data) {
 
         if (error) throw error;
-        console.log("\nProduct Sales by Department\n");
+        console.log("\nProduct Sales by Department\n---------------------------\n");
         var tbl = new table;
         data.forEach(function (data) {
             tbl.cell('department_id', data.department_id);
@@ -72,10 +74,11 @@ function viewSalesByDept() {
 
 function viewDepartments() {
 
+    console.clear();
     sqlCxn.query("SELECT * FROM departments", function (error, data) {
 
         if (error) throw error;
-        console.log("\nDepartments\n");
+        console.log("\nDepartments\n-----------\n");
         var tbl = new table;
         data.forEach(function (data) {
             tbl.cell('department_id', data.department_id);
@@ -92,6 +95,8 @@ function viewDepartments() {
 
 function addDepartment() {
 
+    console.clear();
+    console.log("\nAdd Department\n--------------\n");
     inquirer.prompt([
         {
             name: 'name',

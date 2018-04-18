@@ -15,6 +15,7 @@ var sqlCxn = mysql.createConnection({
 sqlCxn.connect(function (error) {
 
     if (error) throw error;
+    console.clear();
     console.log("\nBAMAZON Online Super Store\n");
     startMenu();
 
@@ -36,7 +37,7 @@ function startMenu() {
 
             if (answers.prompt === '\t1) Display Products') displayProducts(products);
             else if (answers.prompt === '\t2) Place an Order') placeOrder(products);
-            else { console.log('Good-bye!'); sqlCxn.end(); };
+            else { console.clear(); console.log('Good-bye!'); sqlCxn.end(); };
 
         });
 
@@ -46,7 +47,7 @@ function startMenu() {
 
 function displayProducts(products) {
 
-
+    console.clear();
     console.log("\nProducts\n");
     var tbl = new table;
     products.forEach(function(products) {
@@ -62,6 +63,8 @@ function displayProducts(products) {
 
 function placeOrder(products) {
 
+    console.clear();
+    console.log("\nPlace an Order\n--------------\n");
     inquirer.prompt([
         {
             name: 'id',
@@ -106,6 +109,8 @@ function placeOrder(products) {
 
 function updateQuantity(item) {
 
+    console.clear();
+    console.log("\nUpdate Quantity\n---------------\n");
     inquirer.prompt([
         {
             name: 'input',

@@ -14,6 +14,7 @@ var sqlCxn = mysql.createConnection({
 sqlCxn.connect(function (error) {
 
     if (error) throw error;
+    console.clear();
     console.log("\nBAMAZON Online Super Store\n");
     startMenu();
 
@@ -41,7 +42,7 @@ function startMenu() {
             else if (answers.start === '\t2) View Low Inventory') viewLowInventory(products);
             else if (answers.start === '\t3) Update Inventory') updateInventory(products);
             else if (answers.start === '\t4) Add New Product') addProduct();
-            else { console.log('\nGood-bye!'); sqlCxn.end(); };
+            else { console.clear(); console.log('\nGood-bye!'); sqlCxn.end(); };
 
         })
 
@@ -51,7 +52,8 @@ function startMenu() {
 
 function viewProducts(products) {
 
-    console.log("\nItem ID\t\tQty\tPrice\t\tDescription\n");
+    console.clear();
+    console.log("\nProducts for Sale\n-----------------\n\nItem ID\t\tQty\tPrice\t\tDescription\n");
     for (let i = 0; i < products.length; i++) {
         console.log(products[i].item_id + "\t" + products[i].stock_quantity + "\t$" +
             (products[i].price).toFixed(2) + "\t\t" + products[i].product_name);
@@ -63,8 +65,9 @@ function viewProducts(products) {
 
 function viewLowInventory(products) {
 
+    console.clear();
     var count = 0;
-    console.log("\nItem ID\t\tQty\tPrice\t\tDescription\n");
+    console.log("\nLow Inventory\n-------------\n\nItem ID\t\tQty\tPrice\t\tDescription\n");
     for (let i = 0; i < products.length; i++) {
         if (products[i].stock_quantity < 5) {
             console.log(products[i].item_id + "\t" + products[i].stock_quantity + "\t$" +
@@ -80,7 +83,9 @@ function viewLowInventory(products) {
 
 function updateInventory(products) {
 
+    console.clear();
     console.log('');
+    console.log("\nUpdate Inventory\n----------------\n")
     inquirer.prompt([
         {
             name: 'id',
@@ -130,6 +135,8 @@ function updateInventory(products) {
 
 function addProduct() {
 
+    console.clear();
+    console.log("\nAdd Product\n-----------");
     var department_list = [];
     sqlCxn.query("SELECT department_name FROM departments GROUP BY department_name", function (error, departments) {
         if (error) throw error;
