@@ -8,7 +8,7 @@
 
 ### As you'll see in the SQL schema file - `schema.sql` - the SQL database is comprised of two tables, departments and products, each with mock data replicating legitimate items from [`Amazon.com`](https://www.amazon.com). For more database info, check out the SQL schema file in this repository.
 
-### BAMAZON has three views, or modules called: 1) `Customer` 2) `Manager` , and 3) `Supervisor`. Each view can be accessed with its respective file: 1) `bamazonCustomer.js`, 2) `bamazonManager.js`, and 3) `bamazonSupervisor.js`.
+### Bamazon has three views, or modules called: 1) `Customer` 2) `Manager` , and 3) `Supervisor`. Each view can be accessed with its respective file: 1) `bamazonCustomer.js`, 2) `bamazonManager.js`, and 3) `bamazonSupervisor.js`.
 
 ### For a brief video demonstration, [click here](https://drive.google.com/file/d/1pQSLL7Se2MwZK8h-_2RWepMwXaLYIptC/view).
 
